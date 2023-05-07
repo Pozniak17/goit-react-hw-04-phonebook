@@ -1,13 +1,28 @@
 import PropTypes from 'prop-types';
-import { FilterLabel, FilterInput } from './Filter';
+import { nanoid } from 'nanoid';
+import { Form, Input, Label } from './Filter.styled';
 
-export const Filter = ({ value, onChange }) => (
-  <FilterLabel>
-    Find contacts by name
-    <FilterInput type="text" value={value} onChange={onChange} />
-  </FilterLabel>
-);
+const Filter = ({ value, onChangeFilter }) => {
+  const filterInputId = nanoid();
 
+  return (
+    <Form>
+      <Label htmlFor={filterInputId}>Find contacts by name </Label>
+
+      <Input
+        id={filterInputId}
+        type="text"
+        name="filter"
+        value={value}
+        onChange={onChangeFilter}
+        autoComplete="off"
+      />
+    </Form>
+  );
+};
 Filter.propTypes = {
   value: PropTypes.string,
-};
+  onChangeFilter: PropTypes.func.isRequired,
+}.isRequired;
+
+export default Filter;

@@ -1,78 +1,74 @@
-import { Component } from 'react';
-import { nanoid } from 'nanoid';
-import { ContactForm } from './ContactForm/ContactForm.jsx';
-import { ContactList } from './ContactList/ContactList.jsx';
+import { GlobalStyle } from './GlobalStyle';
+import { Box } from './Box';
+import { useState, useEffect } from 'react';
+import useLocalStorage from './hooks/useLocalStorage';
 
-import { MainTitle, ContactTitle } from '../components/styles/GeneralStyles';
+import Filter from './Filter';
+import ContactForm from './ContactForm';
+import Notification from './Notification';
+import ContactList from './ContactList';
+import Section from './Section';
 
-import { Filter } from './Filter/Filter.jsx';
+export const App = () => {
+  const [filter, setFilter] = useState('');
+  const [filteredContacts, setFilteredContacts] = useState([]);
+  const [contacts, setContacts] = useLocalStorage('Contacts', []);
 
-export class App extends Component {
-  state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-  };
-
-  addContact = (name, number) => {
-    console.log(name, number);
-
-    const contact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-
-    this.setState(prevState => {
-      if (prevState.contacts.some(contact => contact.name === name)) {
-        return alert(`${contact.name} is already in contacts`);
-      }
-      return {
-        contacts: [contact, ...prevState.contacts],
-      };
-    });
-  };
-
-  // тут ми беремо вибраний id тудушки яку треба видалити і показуємо всі, в яких id не сходиться.
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
-  };
-
-  changeFilter = event => {
-    this.setState({ filter: event.currentTarget.value });
-  };
-
-  getVisibleTodos = () => {
-    const { contacts, filter } = this.state;
+  useEffect(() => {
     const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
+    const newfilteredContacts = contacts?.filter(({ name }) =>
+      name.toLowerCase().includes(normalizedFilter)
     );
+
+    setFilteredContacts(newfilteredContacts);
+  }, [filter, contacts]);
+
+  const formSubmitHandler = data => {
+    const normalizedName = data.name.toLowerCase();
+
+    contacts?.find(({ name }) => name.toLowerCase().includes(normalizedName))
+      ? alert(`${data.name} is already in contacts.`)
+      : setContacts(state => [...state, data]);
   };
 
-  render() {
-    const { filter } = this.state;
+  const deleteContact = contactsId => {
+    const newContacts = contacts.filter(({ id }) => id !== contactsId);
+    setContacts(newContacts);
+  };
 
-    // const visibleTodos = this.state.contacts.filter(contact => contact.name.includes(this.state.filter);
+  const onChangeFilter = e => {
+    setFilter(e.currentTarget.value);
+  };
 
-    const visibleTodos = this.getVisibleTodos();
+  return (
+    <Box>
+      <h1>Phonebook</h1>
 
-    return (
-      <div>
-        <MainTitle>Phonebook</MainTitle>
-        <ContactForm onSubmit={this.addContact} />
-        <ContactTitle>Contacts</ContactTitle>
+      <Section>
+        <ContactForm formSubmitHandler={formSubmitHandler} />
+      </Section>
 
-        <Filter value={filter} onChange={this.changeFilter} />
-        <ContactList contacts={visibleTodos} onSubmit={this.deleteContact} />
-      </div>
-    );
-  }
-}
+      <Section title="Contacts">
+        {contacts?.length ? (
+          <Box
+            display="flex"
+            flexDirection="column"
+            gridGap="10px"
+            padding="0"
+            margin="0 auto"
+            maxWidth="650px"
+          >
+            <Filter value={filter} onChangeFilter={onChangeFilter} />
+            <ContactList
+              contacts={filteredContacts}
+              onDeleteClick={deleteContact}
+            />
+          </Box>
+        ) : (
+          <Notification message="There are no contacts." />
+        )}
+      </Section>
+      <GlobalStyle />
+    </Box>
+  );
+};

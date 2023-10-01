@@ -15,8 +15,6 @@ export const ContactForm = ({ onSubmit }) => {
   const handleChange = event => {
     // setState({[name]:value}) --- в name запиши значення, в number запиши
     const { name, value } = event.target;
-
-    console.log(name);
     if (name === 'name') {
       setName(value);
     } else if (name === 'number') {

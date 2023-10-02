@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactList/ContactList';
@@ -8,13 +8,13 @@ import { GlobalStyle } from './GlobalStyle.styled';
 import { Layout } from './Layout.styled';
 
 export const App = () => {
+  const [filter, setFilter] = useState('');
   const [contacts, setContacts] = useState([
     { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
     { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
     { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
     { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
   ]);
-  const [filter, setFilter] = useState('');
 
   // componentDidMount() {
   //   const savedContacts = localStorage.getItem('contacts');
@@ -23,6 +23,15 @@ export const App = () => {
   //     this.setState({ contacts });
   //   }
   // }
+
+  useEffect(() => {
+    const savedContacts = localStorage.getItem('contacts');
+    const contacts = JSON.parse(savedContacts);
+    if (contacts) {
+      setContacts(contacts);
+      console.log('Спряцував componentDidMount 1 раз');
+    }
+  }, []);
 
   // componentDidUpdate(_, prevState) {
   //   const { contacts } = this.state;
@@ -73,8 +82,8 @@ export const App = () => {
     });
   };
 
+  // this.setState({ filter: event.target.value });
   const handleChangeFilter = event => {
-    // this.setState({ filter: event.target.value });
     setFilter(event.target.value);
   };
 

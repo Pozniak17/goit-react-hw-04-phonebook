@@ -16,48 +16,18 @@ export const App = () => {
     { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
   ]);
 
-  // componentDidMount() {
-  //   const savedContacts = localStorage.getItem('contacts');
-  //   const contacts = JSON.parse(savedContacts);
-  //   if (contacts) {
-  //     this.setState({ contacts });
-  //   }
-  // }
-
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts');
     const contacts = JSON.parse(savedContacts);
+    console.log(contacts);
     if (contacts) {
       setContacts(contacts);
-      console.log('Спряцував componentDidMount 1 раз');
     }
   }, []);
 
-  // componentDidUpdate(_, prevState) {
-  //   const { contacts } = this.state;
-  //   if (contacts !== prevState.contacts) {
-  //     localStorage.setItem('contacts', JSON.stringify(contacts));
-  //   }
-  // }
-
-  // const formSubmitApp = data => {
-  //   if (
-  //     contacts.find(
-  //       el => el.name.toLowerCase().trim() === data.name.toLowerCase().trim()
-  //     )
-  //   ) {
-  //     alert(`${data.name} is already in contacts`);
-  //     return;
-  //   }
-  //   setContacts(state => [
-  //     ...state,
-  //     {
-  //       id: idGenerator(),
-  //       name: data.name,
-  //       numberTel: data.number,
-  //     },
-  //   ]);
-  // };
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const addContact = (name, number) => {
     const contact = {
@@ -66,20 +36,17 @@ export const App = () => {
       number,
     };
 
-    setContacts(prevState => {
-      if (
-        prevState.contacts.some(
-          contact =>
-            contact.name.toLowerCase() === name.toLowerCase() ||
-            contact.number === number
-        )
-      ) {
-        return alert(`${name} or ${number} is already in contacts`);
-      }
-      return {
-        contacts: [contact, ...prevState.contacts],
-      };
-    });
+    if (
+      contacts.some(
+        contact =>
+          contact.name.toLowerCase() === name.toLowerCase() ||
+          contact.number === number
+      )
+    ) {
+      alert(`${name} or ${number} is already in contacts`);
+    } else {
+      setContacts(prevState => [contact, ...prevState]);
+    }
   };
 
   // this.setState({ filter: event.target.value });

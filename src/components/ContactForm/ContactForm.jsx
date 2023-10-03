@@ -26,6 +26,7 @@ export const ContactForm = ({ onSubmit }) => {
     event.preventDefault();
     // передаємо через проп onSumit => App
     onSubmit(name, number);
+
     reset();
   };
 

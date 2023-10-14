@@ -9,9 +9,11 @@ import { Layout } from './Layout.styled';
 
 export const App = () => {
   const [filter, setFilter] = useState('');
-  // Зчитуємо або в нас є 'contacts' або якщо пустий рядок то показати масив
-  const [contacts, setContacts] = useState(
-    JSON.parse(
+  // Зчитуємо або в нас є 'contacts' або якщо пустий рядок, то показати масив
+  // також ()=> лінива ініціалізація стану, коли useState викличе фун-ю 1 раз, коли стан залежить від розрахунків, щоб не було кожен раз рендер в localStorage.
+  const [contacts, setContacts] = useState(() => {
+    console.log('Робимо початкову ініціалізацію, тест');
+    return JSON.parse(
       window.localStorage.getItem('contacts') ??
         JSON.stringify([
           { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
@@ -19,9 +21,8 @@ export const App = () => {
           { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
           { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
         ])
-    )
-  );
-
+    );
+  });
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts');
     const contacts = JSON.parse(savedContacts);

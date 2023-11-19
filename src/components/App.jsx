@@ -18,18 +18,9 @@ export const App = () => {
   const [filter, setFilter] = useState('');
   // Зчитуємо або в нас є 'contacts' або якщо пустий рядок, то показати масив
   // також ()=> лінива ініціалізація стану, коли useState викличе фун-ю 1 раз, коли стан залежить від розрахунків, щоб не було кожен раз рендер в localStorage.
-  const [contacts, setContacts] = useState(() =>
-    JSON.parse(window.localStorage.getItem('contacts') ?? initialState)
+  const [contacts, setContacts] = useState(
+    () => JSON.parse(window.localStorage.getItem('contacts')) ?? initialState
   );
-
-  useEffect(() => {
-    const savedContacts = localStorage.getItem('contacts');
-    const contacts = JSON.parse(savedContacts);
-    console.log(contacts);
-    if (contacts) {
-      setContacts(contacts);
-    }
-  }, []);
 
   useEffect(() => {
     window.localStorage.setItem('contacts', JSON.stringify(contacts));
